@@ -1,4 +1,5 @@
 ﻿using Algo96.EF;
+using AlgoBot.EF;
 using AlgoBot.EF.DAL;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -17,10 +18,10 @@ namespace AlgoBot.Logic
 {
     public class MainRepository
     {
-        private readonly BotDbContext _db;
+        private readonly DBMethods _db;
         private readonly UserRepository _userRepository;
         private int RegisterStep = 0;
-        public MainRepository(BotDbContext db)
+        public MainRepository(DBMethods db)
         {
             _db = db;
             _userRepository = new UserRepository(db, this);
@@ -28,6 +29,7 @@ namespace AlgoBot.Logic
 
         public async Task HandleUpdateAsync(ITelegramBotClient bot, Update update, CancellationToken cancellationToken)
         {
+            var callbackQuery = update.CallbackQuery;
             if (update.Type == UpdateType.Message)
             {
                 var message = update.Message;
@@ -37,6 +39,11 @@ namespace AlgoBot.Logic
                 }
                 else if (message.Text.ToLower() == "/register")
                 {
+                    _db.CreateUser(message.From.Username);
+                    await bot.SendTextMessageAsync(
+                        message.Chat.Id,
+                        text: "Для начала давайте познакомимся!\nКак вас зовут?\nНажмите на кнопку для ввода данных",
+                        replyMarkup: KeyboardMarkup.StartReg);
                     var receiverOptions = new ReceiverOptions
                     {
                         AllowedUpdates = { },
@@ -47,6 +54,17 @@ namespace AlgoBot.Logic
                         receiverOptions,
                         cancellationToken
                     );
+                }
+                else if (message.Text.ToLower() == "/profile")
+                {
+                    var user = await _db.GetUser(message.From.Username);
+                    if (user != null) await bot.SendTextMessageAsync(
+                        message.Chat.Id,
+                        text: $"Имя: {user.Firstname} \nНомер телефона: {user.PhoneNumber}\nИмя ребёнка: {user.ChildName} \nВозраст ребёнка: {user.ChildAge}");
+                    else await bot.SendTextMessageAsync(
+                        message.Chat.Id,
+                        text: "Вы ещё не зарегистрированы у нас :(, вы можете исправить это с помощью команды /register");
+
                 }
                 else
                 {

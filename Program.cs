@@ -24,7 +24,8 @@ namespace TelegramBotExperiments
         static void Main(string[] args)
         {
             var db = new DbContextFactory().CreateDbContext();
-            MainRepository = new MainRepository(db);
+            var dbMethods = new DBMethods(db);
+            MainRepository = new MainRepository(dbMethods);
             Console.WriteLine("Запущен бот " + bot.GetMeAsync().Result.Username);
             Console.WriteLine($"Всего пользователей: {db.Users.Count()}");
 

@@ -1,4 +1,5 @@
 ﻿using Algo96.EF;
+using AlgoBot.EF;
 using AlgoBot.EF.DAL;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -11,66 +12,66 @@ using Telegram.Bot.Polling;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
+using Telegram.Bots;
+using Telegram.Bots.Http;
 
 namespace AlgoBot.Logic
 {
     public class UserRepository
     {
-        private readonly BotDbContext _db;
+        private readonly DBMethods _db;
         private readonly MainRepository _mainRepository;
         private Dictionary<string, int> UserRegisterSteps = new Dictionary<string, int>();
 
-        public UserRepository(BotDbContext db, MainRepository main)
+        public UserRepository(DBMethods db, MainRepository main)
         {
             _db = db;
             _mainRepository = main;
         }
         public async Task RegisterUser(ITelegramBotClient bot, Update update, CancellationToken cancellationToken)
         {
+            
             if (update.Type == UpdateType.Message)
             {
                 var message = update.Message;
-                if (!UserRegisterSteps.ContainsKey(message.From.Username)) UserRegisterSteps.Add(message.From.Username, 0);
-                var registerStep = UserRegisterSteps[message.From.Username];
-                if (registerStep == 0) await bot.SendTextMessageAsync(message.Chat, "Для начала давайте познакомимся!\nКак вас зовут?");
-                else if (registerStep == 1)
+                var stageReg = await _db.GetUserStageReg(message.From.Username);
+                if (stageReg == 1) await _db.AddUserFirstName(message.From.Username, message.Text);
+                if (stageReg == 2) await _db.AddUserPhoneNumber(message.From.Username, message.Text);
+                if (stageReg == 3) await _db.AddUserChildAge(message.From.Username, message.Text);
+                if (stageReg == 4) await _db.AddUserChildName(message.From.Username, message.Text);
+            }
+            if (update.Type == UpdateType.CallbackQuery)
+            {
+                var callbackQuery = update.CallbackQuery;
+                if (callbackQuery.Data == "FirstName")
                 {
-                    await _db.Users.AddAsync(new BotUser { Username = message.From.Username, Firstname = message.Text, ChildAge = "", PhoneNumber = "", ChildName = "" });
-                    await _db.SaveChangesAsync();
-                    await bot.SendTextMessageAsync(message.Chat, "Ваш номер телефона:");
+                    await _db.EditStageReg(callbackQuery.Message.Chat.Username, 1);
+                    await bot.SendTextMessageAsync(
+                        callbackQuery.Message.Chat.Id,
+                        text: "Введите ФИО:");
                 }
-                else if (registerStep == 2)
+                else if (callbackQuery.Data == "PhoneNumber")
                 {
-                    var user = await _db.Users.FirstOrDefaultAsync(u => u.Username == message.From.Username);
-                    user.PhoneNumber = message.Text;
-                    await _db.SaveChangesAsync();
-                    await bot.SendTextMessageAsync(message.Chat, "Возраст ребёнка:");
+                    await _db.EditStageReg(callbackQuery.Message.Chat.Username, 2);
+                    await bot.SendTextMessageAsync(
+                        callbackQuery.Message.Chat.Id,
+                        text: "Введите номер телефона:");
                 }
-                else if (registerStep == 3)
+                else if (callbackQuery.Data == "ChildAge")
                 {
-                    var user = await _db.Users.FirstOrDefaultAsync(u => u.Username == message.From.Username);
-                    user.ChildAge = message.Text;
-                    await _db.SaveChangesAsync();
-                    await bot.SendTextMessageAsync(message.Chat, "Имя ребёнка:");
+                    await _db.EditStageReg(callbackQuery.Message.Chat.Username, 3);
+                    await bot.SendTextMessageAsync(
+                        callbackQuery.Message.Chat.Id,
+                        text: "Введите возраст ребёнка:");
                 }
-                else if (registerStep == 4)
+                else if (callbackQuery.Data == "ChildName")
                 {
-                    var user = await _db.Users.FirstOrDefaultAsync(u => u.Username == message.From.Username);
-                    user.ChildName = message.Text;
-                    await _db.SaveChangesAsync();
-                    await bot.SendTextMessageAsync(message.Chat, "Спасибо за регистрацию :)");
-                    await bot.ReceiveAsync(
-                        _mainRepository.HandleUpdateAsync,
-                        _mainRepository.HandleErrorAsync,
-                        new ReceiverOptions
-                        {
-                            AllowedUpdates = { },
-                        },
-                        cancellationToken
-                    );
+                    await _db.EditStageReg(callbackQuery.Message.Chat.Username, 4);
+                    await bot.SendTextMessageAsync(
+                        callbackQuery.Message.Chat.Id,
+                        text: "Введите имя ребёнка:");
                 }
-                UserRegisterSteps[message.From.Username]++;
-            } 
+            }
         }
     }
 }
