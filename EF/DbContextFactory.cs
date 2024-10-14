@@ -11,7 +11,7 @@ namespace AlgoBot.EF
         public BotDbContext CreateDbContext()
         {
             var builder = new DbContextOptionsBuilder<BotDbContext>();
-            builder.UseNpgsql("");
+            builder.UseNpgsql("W");
 
             return new BotDbContext(builder.Options);
         }

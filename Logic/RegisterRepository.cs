@@ -17,13 +17,13 @@ using Telegram.Bots.Http;
 
 namespace AlgoBot.Logic
 {
-    public class UserRepository
+    public class RegisterRepository
     {
         private readonly DBMethods _db;
         private readonly MainRepository _mainRepository;
         private Dictionary<string, int> UserRegisterSteps = new Dictionary<string, int>();
 
-        public UserRepository(DBMethods db, MainRepository main)
+        public RegisterRepository(DBMethods db, MainRepository main)
         {
             _db = db;
             _mainRepository = main;

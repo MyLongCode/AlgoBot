@@ -28,5 +28,29 @@ namespace AlgoBot.Logic
                 InlineKeyboardButton.WithCallbackData(text: "Имя ребёнка", callbackData: "ChildName"),
             },
         });
+
+        public static InlineKeyboardMarkup MainMenu = new(new[]
+        {
+            new []
+            {
+                InlineKeyboardButton.WithCallbackData(text: "Мой профиль", callbackData: "Profile"),
+            },
+            new []
+            {
+                InlineKeyboardButton.WithCallbackData(text: "Статистика", callbackData: "Stats"),
+            },
+            new []
+            {
+                InlineKeyboardButton.WithCallbackData(text: "Создать реферальную ссылку", callbackData: "GetRef"),
+            },
+        });
+
+        public static InlineKeyboardMarkup StartMenu = new(new[]
+        {
+            new []
+            {
+                InlineKeyboardButton.WithCallbackData(text: "Зарегистрироваться", callbackData: "Register"),
+            },
+        });
     }
 }
