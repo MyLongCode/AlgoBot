@@ -13,20 +13,8 @@ namespace AlgoBot.Logic
         {
             new []
             {
-                InlineKeyboardButton.WithCallbackData(text: "Ваше имя", callbackData: "FirstName"),
-            },
-            new []
-            {
-                InlineKeyboardButton.WithCallbackData(text: "Номер телефона", callbackData: "PhoneNumber"),
-            },
-            new []
-            {
-                InlineKeyboardButton.WithCallbackData(text: "Возраст ребёнка", callbackData: "ChildAge"),
-            },
-            new []
-            {
-                InlineKeyboardButton.WithCallbackData(text: "Имя ребёнка", callbackData: "ChildName"),
-            },
+                InlineKeyboardButton.WithCallbackData(text: "Начать регистрацию!", callbackData: "StartRegistration"),
+            }
         });
 
         public static InlineKeyboardMarkup MainMenu = new(new[]

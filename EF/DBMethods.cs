@@ -59,7 +59,6 @@ namespace AlgoBot.EF
         {
             var user = await _db.Users.FirstOrDefaultAsync(user => user.Username == username);
             user.Firstname = firstName;
-            user.StageReg = 2;
             _db.Users.Update(user);
             await _db.SaveChangesAsync();
         }
@@ -68,7 +67,6 @@ namespace AlgoBot.EF
         {
             var user = await _db.Users.FirstOrDefaultAsync(user  => user.Username == username);
             user.PhoneNumber = phonenumber;
-            user.StageReg = 2;
             _db.Users.Update(user);
             await _db.SaveChangesAsync();
         }
@@ -77,7 +75,6 @@ namespace AlgoBot.EF
         {
             var user = await _db.Users.FirstOrDefaultAsync(user => user.Username == username);
             user.ChildAge = childAge;
-            user.StageReg = 3;
             _db.Users.Update(user);
             await _db.SaveChangesAsync();
         }
@@ -86,7 +83,6 @@ namespace AlgoBot.EF
         {
             var user = await _db.Users.FirstOrDefaultAsync(user => user.Username == username);
             user.ChildName = childName;
-            user.StageReg = 4;
             _db.Users.Update(user);
             await _db.SaveChangesAsync();
         }

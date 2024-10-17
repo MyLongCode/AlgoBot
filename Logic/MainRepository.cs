@@ -12,8 +12,6 @@ using Telegram.Bot.Polling;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
-using Telegram.Bots;
-using Telegram.Bots.Http;
 using TelegramBotExperiments;
 
 namespace AlgoBot.Logic
@@ -63,6 +61,7 @@ namespace AlgoBot.Logic
                 var callbackQuery = update.CallbackQuery;
                 if (callbackQuery.Data == "Register")
                 {
+                    await _db.CreateUser(callbackQuery.From.Username);
                     await bot.DeleteMessageAsync(
                             callbackQuery.Message.Chat.Id,
                             callbackQuery.Message.MessageId);
@@ -82,14 +81,10 @@ namespace AlgoBot.Logic
                 }
                 else if (callbackQuery.Data== "Profile")
                 {
-                    var user = await _db.GetUser(callbackQuery.Message.From.Username);
-                    if (user != null) await bot.SendTextMessageAsync(
+                    var user = await _db.GetUser(callbackQuery.From.Username);
+                    await bot.SendTextMessageAsync(
                         callbackQuery.Message.Chat.Id,
                         text: $"Имя: {user.Firstname} \nНомер телефона: {user.PhoneNumber}\nИмя ребёнка: {user.ChildName} \nВозраст ребёнка: {user.ChildAge}");
-                    else await bot.SendTextMessageAsync(
-                        callbackQuery.Message.Chat.Id,
-                        text: "Вы ещё не зарегистрированы у нас :(, вы можете исправить это с помощью команды /register");
-
                 }
             }
         }
