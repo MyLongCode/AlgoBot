@@ -33,14 +33,14 @@ namespace AlgoBot.Logic
             if (update.Type == UpdateType.Message)
             {
                 var message = update.Message;
-                if (message.Text.ToLower() == "/start")
+                if (message.Text.StartsWith("/start"))
                 {
                     var user = await _db.GetUser(message.From.Username);
                     if (user != null)
                     {
                         await bot.SendTextMessageAsync(
                             message.Chat.Id,
-                            text: "Здравствуйте!",
+                            text: "Меню действий!",
                             replyMarkup: KeyboardMarkup.MainMenu);
                     }
                     else
@@ -51,10 +51,10 @@ namespace AlgoBot.Logic
                     }
                 }
                 
-                else
-                {
-                    await bot.SendTextMessageAsync(message.Chat, "Я тебя не понимаю :(, введи /help, чтобы узнать на что я способен!");
-                }
+                //else
+                //{
+                //    await bot.SendTextMessageAsync(message.Chat, "Я тебя не понимаю :(, введи /help, чтобы узнать на что я способен!");
+                //}
             }
             if (update.Type == UpdateType.CallbackQuery)
             {
@@ -81,10 +81,37 @@ namespace AlgoBot.Logic
                 }
                 else if (callbackQuery.Data== "Profile")
                 {
+                    await bot.DeleteMessageAsync(
+                            callbackQuery.Message.Chat.Id,
+                            callbackQuery.Message.MessageId);
                     var user = await _db.GetUser(callbackQuery.From.Username);
                     await bot.SendTextMessageAsync(
                         callbackQuery.Message.Chat.Id,
-                        text: $"Имя: {user.Firstname} \nНомер телефона: {user.PhoneNumber}\nИмя ребёнка: {user.ChildName} \nВозраст ребёнка: {user.ChildAge}");
+                        text: $"Имя: {user.Firstname} \nНомер телефона: {user.PhoneNumber}\nИмя ребёнка: {user.ChildName} \nВозраст ребёнка: {user.ChildAge}",
+                        replyMarkup: KeyboardMarkup.MainMenu);
+                }
+                else if (callbackQuery.Data == "GetRef")
+                {
+                    await bot.DeleteMessageAsync(
+                            callbackQuery.Message.Chat.Id,
+                            callbackQuery.Message.MessageId);
+                    var user = await _db.GetUser(callbackQuery.From.Username);
+                    string referralLink = $"https://t.me/{bot.GetMeAsync().Result.Username}?start=referral_{user.Username}";
+                    await bot.SendTextMessageAsync(
+                        callbackQuery.Message.Chat.Id,
+                        text: $"Вот ваша реферальная ссылка:\n{referralLink}",
+                        replyMarkup: KeyboardMarkup.MainMenu);
+                }
+                else if (callbackQuery.Data == "EndRegistration")
+                {
+                    await bot.DeleteMessageAsync(
+                            callbackQuery.Message.Chat.Id,
+                            callbackQuery.Message.MessageId);
+                    await bot.SendTextMessageAsync(
+                        callbackQuery.Message.Chat.Id,
+                        text: $"Поздравляю с успешным прохождением регистрации!\nЧто я умею?",
+                        replyMarkup: KeyboardMarkup.MainMenu);
+
                 }
             }
         }

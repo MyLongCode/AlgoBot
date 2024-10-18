@@ -53,7 +53,8 @@ namespace AlgoBot.Logic
                 {
                     await bot.SendTextMessageAsync(
                         message.Chat.Id,
-                        text: "Замечательно! Вы прошли регистрацию, перенаправляем вас в главное меню...");
+                        text: "Замечательно! Вы ввели все нужные данные :).",
+                        replyMarkup: KeyboardMarkup.EndReg);
                     await _db.EditStageReg(message.Chat.Username, 5);
                     await _db.AddUserChildName(message.From.Username, message.Text);
                     await bot.ReceiveAsync(

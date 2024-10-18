@@ -16,6 +16,13 @@ namespace AlgoBot.Logic
                 InlineKeyboardButton.WithCallbackData(text: "Начать регистрацию!", callbackData: "StartRegistration"),
             }
         });
+        public static InlineKeyboardMarkup EndReg = new(new[]
+        {
+            new []
+            {
+                InlineKeyboardButton.WithCallbackData(text: "Закончить регистрацию", callbackData: "EndRegistration"),
+            },
+        });
 
         public static InlineKeyboardMarkup MainMenu = new(new[]
         {

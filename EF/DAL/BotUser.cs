@@ -11,6 +11,7 @@ namespace AlgoBot.EF.DAL
     {
         [Key]
         public string Username { get; set; }
+        public string? ReferalUsername { get; set; }
         public string Firstname { get; set; } = null!;
         public string PhoneNumber{ get; set; } = null!;
         public string ChildAge{ get; set; } = null!;
