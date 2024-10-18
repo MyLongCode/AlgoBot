@@ -45,6 +45,10 @@ namespace AlgoBot.Logic
                     }
                     else
                     {
+                        var referal = "";
+                        var referalName = message.Text.Split(' ');
+                        if (referalName.Length == 2) referal = referalName[1].Split('_')[1];
+                        await _db.CreateUser(message.From.Username, referal);
                         await bot.SendTextMessageAsync(message.Chat,
                                                 text: "Здравствуйте! Я - бот помощник Алгоритмики :), давайте зарегистрируемся?",
                                                 replyMarkup: KeyboardMarkup.StartMenu);
@@ -61,7 +65,7 @@ namespace AlgoBot.Logic
                 var callbackQuery = update.CallbackQuery;
                 if (callbackQuery.Data == "Register")
                 {
-                    await _db.CreateUser(callbackQuery.From.Username);
+                    
                     await bot.DeleteMessageAsync(
                             callbackQuery.Message.Chat.Id,
                             callbackQuery.Message.MessageId);
@@ -111,7 +115,18 @@ namespace AlgoBot.Logic
                         callbackQuery.Message.Chat.Id,
                         text: $"Поздравляю с успешным прохождением регистрации!\nЧто я умею?",
                         replyMarkup: KeyboardMarkup.MainMenu);
+                }
+                else if(callbackQuery.Data == "Stats")
+                {
+                    await bot.DeleteMessageAsync(
+                            callbackQuery.Message.Chat.Id,
+                            callbackQuery.Message.MessageId);
+                    var users = await _db.GetReferals(callbackQuery.From.Username);
 
+                    await bot.SendTextMessageAsync(
+                        callbackQuery.Message.Chat.Id,
+                        text: $"Общее количество рефералов: {users.Count()}",
+                        replyMarkup: KeyboardMarkup.MainMenu);
                 }
             }
         }

@@ -32,15 +32,16 @@ namespace AlgoBot.EF
         public async Task<int> GetUserStageReg(string username)
         {
             var user = await _db.Users.FirstOrDefaultAsync(user => user.Username == username);
-            if (user == null)
-            {
-                await CreateUser(username);
-                return 0;
-            }
             return user.StageReg;
         }
 
-        public async Task CreateUser(string username)
+        public async Task<IEnumerable<BotUser>> GetReferals(string username)
+        {
+            var users = await _db.Users.Where(user => user.ReferalUsername == username).ToListAsync();
+            return users;
+        }
+
+        public async Task CreateUser(string username, string referal)
         {
             var user = new BotUser
             {
@@ -49,6 +50,7 @@ namespace AlgoBot.EF
                 PhoneNumber = "",
                 ChildAge = "",
                 ChildName = "",
+                ReferalUsername = referal,
                 StageReg = 0
             };
             await _db.Users.AddAsync(user);
