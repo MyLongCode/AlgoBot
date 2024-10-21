@@ -51,7 +51,8 @@ namespace AlgoBot.EF
                 ChildAge = "",
                 ChildName = "",
                 ReferalUsername = referal,
-                StageReg = 0
+                StageReg = 0,
+                Score = 0
             };
             await _db.Users.AddAsync(user);
             await _db.SaveChangesAsync();
