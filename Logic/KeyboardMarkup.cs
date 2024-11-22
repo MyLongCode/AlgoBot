@@ -36,7 +36,15 @@ namespace AlgoBot.Logic
             },
             new []
             {
+                InlineKeyboardButton.WithCallbackData(text: "Данные для входа в сервис", callbackData: "ProfileWeb"),
+            },
+            new []
+            {
                 InlineKeyboardButton.WithCallbackData(text: "Создать реферальную ссылку", callbackData: "GetRef"),
+            },
+            new []
+            {
+                InlineKeyboardButton.WithCallbackData(text: "Посмотреть кэшбек", callbackData: "GetCashback"),
             },
         });
 

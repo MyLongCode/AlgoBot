@@ -15,7 +15,7 @@ namespace TelegramBotExperiments
 
     public static class Program
     {
-        static ITelegramBotClient bot = new TelegramBotClient("");
+        static ITelegramBotClient bot = new TelegramBotClient("7473710652:AAHk4jke6MDaYVzqIuT9-wXUA-2lsaAlpc4");
         static RegisterRepository UserRepository;
         static MainRepository MainRepository;
        

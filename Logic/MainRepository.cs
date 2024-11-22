@@ -1,4 +1,4 @@
-﻿using Algo96.EF;
+﻿using AlgoBot.EF;
 using AlgoBot.EF;
 using AlgoBot.EF.DAL;
 using Microsoft.EntityFrameworkCore;
@@ -36,7 +36,7 @@ namespace AlgoBot.Logic
                 if (message.Text.StartsWith("/start"))
                 {
                     var user = await _db.GetUser(message.From.Username);
-                    if (user != null)
+                    if (user != null && user.StageReg == 5)
                     {
                         await bot.SendTextMessageAsync(
                             message.Chat.Id,
@@ -54,10 +54,12 @@ namespace AlgoBot.Logic
                                                 replyMarkup: KeyboardMarkup.StartMenu);
                     }
                 }
-                
+
                 //else
                 //{
-                //    await bot.SendTextMessageAsync(message.Chat, "Я тебя не понимаю :(, введи /help, чтобы узнать на что я способен!");
+                //    await bot.SendTextMessageAsync(message.Chat,
+                //                                text: "Что я умею?",
+                //                                replyMarkup: KeyboardMarkup.MainMenu);
                 //}
             }
             if (update.Type == UpdateType.CallbackQuery)
@@ -91,7 +93,18 @@ namespace AlgoBot.Logic
                     var user = await _db.GetUser(callbackQuery.From.Username);
                     await bot.SendTextMessageAsync(
                         callbackQuery.Message.Chat.Id,
-                        text: $"Имя: {user.Firstname} \nНомер телефона: {user.PhoneNumber}\nИмя ребёнка: {user.ChildName} \nВозраст ребёнка: {user.ChildAge}",
+                        text: $"Имя: {user.FullName} \nНомер телефона: {user.PhoneNumber}\nИмя ребёнка: {user.ChildName} \nВозраст ребёнка: {user.ChildAge}",
+                        replyMarkup: KeyboardMarkup.MainMenu);
+                }
+                else if (callbackQuery.Data == "ProfileWeb")
+                {
+                    await bot.DeleteMessageAsync(
+                            callbackQuery.Message.Chat.Id,
+                            callbackQuery.Message.MessageId);
+                    var user = await _db.GetWebUser(callbackQuery.From.Username);
+                    await bot.SendTextMessageAsync(
+                        callbackQuery.Message.Chat.Id,
+                        text: $"Логин: {user.Login} \nПароль: {user.Password}",
                         replyMarkup: KeyboardMarkup.MainMenu);
                 }
                 else if (callbackQuery.Data == "GetRef")
@@ -100,10 +113,21 @@ namespace AlgoBot.Logic
                             callbackQuery.Message.Chat.Id,
                             callbackQuery.Message.MessageId);
                     var user = await _db.GetUser(callbackQuery.From.Username);
-                    string referralLink = $"https://t.me/{bot.GetMeAsync().Result.Username}?start=referral_{user.Username}";
+                    string referralLink = $"https://t.me/{bot.GetMeAsync().Result.Username}?start=referral_{user.Login  }";
                     await bot.SendTextMessageAsync(
                         callbackQuery.Message.Chat.Id,
                         text: $"Вот ваша реферальная ссылка:\n{referralLink}",
+                        replyMarkup: KeyboardMarkup.MainMenu);
+                }
+                else if (callbackQuery.Data == "GetCashback")
+                {
+                    await bot.DeleteMessageAsync(
+                            callbackQuery.Message.Chat.Id,
+                            callbackQuery.Message.MessageId);
+                    var cashback = await _db.GetCashback(callbackQuery.From.Username);
+                    await bot.SendTextMessageAsync(
+                        callbackQuery.Message.Chat.Id,
+                        text: $"Ваш кэшбек:\n{cashback} рублей",
                         replyMarkup: KeyboardMarkup.MainMenu);
                 }
                 else if (callbackQuery.Data == "EndRegistration")
