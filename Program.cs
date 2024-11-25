@@ -9,6 +9,7 @@ using AlgoBot.EF;
 using Telegram.Bot.Types.ReplyMarkups;
 using Telegram.Bot.Types.Enums;
 using AlgoBot.Logic;
+using Microsoft.EntityFrameworkCore;
 
 namespace TelegramBotExperiments
 {

@@ -90,7 +90,7 @@ namespace AlgoBot.Logic
                     await bot.DeleteMessageAsync(
                             callbackQuery.Message.Chat.Id,
                             callbackQuery.Message.MessageId);
-                    var user = await _db.GetUser(callbackQuery.From.Username);
+                    var user = await _db.GetUserAsNoTracking(callbackQuery.From.Username);
                     await bot.SendTextMessageAsync(
                         callbackQuery.Message.Chat.Id,
                         text: $"Имя: {user.FullName} \nНомер телефона: {user.PhoneNumber}\nИмя ребёнка: {user.ChildName} \nВозраст ребёнка: {user.ChildAge}",
@@ -101,7 +101,7 @@ namespace AlgoBot.Logic
                     await bot.DeleteMessageAsync(
                             callbackQuery.Message.Chat.Id,
                             callbackQuery.Message.MessageId);
-                    var user = await _db.GetWebUser(callbackQuery.From.Username);
+                    var user = await _db.GetUserAsNoTracking(callbackQuery.From.Username);
                     await bot.SendTextMessageAsync(
                         callbackQuery.Message.Chat.Id,
                         text: $"Логин: {user.Login} \nПароль: {user.Password}",
@@ -112,7 +112,7 @@ namespace AlgoBot.Logic
                     await bot.DeleteMessageAsync(
                             callbackQuery.Message.Chat.Id,
                             callbackQuery.Message.MessageId);
-                    var user = await _db.GetUser(callbackQuery.From.Username);
+                    var user = await _db.GetUserAsNoTracking(callbackQuery.From.Username);
                     string referralLink = $"https://t.me/{bot.GetMeAsync().Result.Username}?start=referral_{user.Login  }";
                     await bot.SendTextMessageAsync(
                         callbackQuery.Message.Chat.Id,

@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace AlgoBot.EF
 {
@@ -26,13 +27,13 @@ namespace AlgoBot.EF
 
         public async Task<User> GetUser(string username)
         {
-            var user = await _db.Users.AsNoTracking().FirstOrDefaultAsync(user => user.Login == username);
+            var user = await _db.Users.FirstOrDefaultAsync(user => user.Login == username);
             return user;
         }
 
-        public async Task<User> GetWebUser(string username)
+        public async Task<User> GetUserAsNoTracking(string username)
         {
-            var user = await GetUser(username);
+            var user = await _db.Users.AsNoTracking().FirstOrDefaultAsync(user => user.Login == username);
             return user;
         }
 
@@ -66,12 +67,10 @@ namespace AlgoBot.EF
             };
             _db.Users.Add(botUser);
             await _db.SaveChangesAsync();
-
         }
 
         public async Task AddUserFirstName(string username, string firstName)
         {
-
             var user = await GetUser(username);
             user.FullName = firstName;
             _db.Users.Update(user);
@@ -107,7 +106,7 @@ namespace AlgoBot.EF
 
         public async Task<int> GetCashback(string username)
         {
-            var user = await GetUser(username);
+            var user = await GetUserAsNoTracking(username);
             return user.Cashback;
         }
     }
