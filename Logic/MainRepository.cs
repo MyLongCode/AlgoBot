@@ -47,7 +47,7 @@ namespace AlgoBot.Logic
                     {
                         var referal = "";
                         var referalName = message.Text.Split(' ');
-                        if (referalName.Length == 2) referal = referalName[1].Split('_')[1];
+                        if (referalName.Length == 2) referal = referalName[1].Split("referral_")[1];
                         await _db.CreateUser(message.From.Username, referal);
                         await bot.SendTextMessageAsync(message.Chat,
                                                 text: "Здравствуйте! Я - бот помощник Алгоритмики :), давайте зарегистрируемся?",
