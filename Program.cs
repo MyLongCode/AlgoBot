@@ -20,15 +20,11 @@ namespace TelegramBotExperiments
         static RegisterRepository UserRepository;
         static MainRepository MainRepository;
        
-
-
         static void Main(string[] args)
         {
             var db = new DbContextFactory().CreateDbContext();
             var dbMethods = new DBMethods(db);
             MainRepository = new MainRepository(dbMethods);
-            Console.WriteLine("Запущен бот " + bot.GetMeAsync().Result.Username);
-            Console.WriteLine($"Всего пользователей: {db.Users.Count()}");
 
             var cts = new CancellationTokenSource();
             var cancellationToken = cts.Token;

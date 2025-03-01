@@ -2,6 +2,7 @@
 using AlgoBot.EF;
 using AlgoBot.EF.DAL;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json.Bson;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -67,10 +68,8 @@ namespace AlgoBot.Logic
                 var callbackQuery = update.CallbackQuery;
                 if (callbackQuery.Data == "Register")
                 {
-                    
-                    await bot.DeleteMessageAsync(
-                            callbackQuery.Message.Chat.Id,
-                            callbackQuery.Message.MessageId);
+
+                    DeleteMessage(bot, callbackQuery);
                     await bot.SendTextMessageAsync(
                         callbackQuery.Message.Chat.Id,
                         text: "Для начала давайте познакомимся!\nНажмите на кнопку для ввода данных",
@@ -87,9 +86,7 @@ namespace AlgoBot.Logic
                 }
                 else if (callbackQuery.Data== "Profile")
                 {
-                    await bot.DeleteMessageAsync(
-                            callbackQuery.Message.Chat.Id,
-                            callbackQuery.Message.MessageId);
+                    DeleteMessage(bot, callbackQuery);
                     var user = await _db.GetUserAsNoTracking(callbackQuery.From.Username);
                     await bot.SendTextMessageAsync(
                         callbackQuery.Message.Chat.Id,
@@ -98,20 +95,16 @@ namespace AlgoBot.Logic
                 }
                 else if (callbackQuery.Data == "ProfileWeb")
                 {
-                    await bot.DeleteMessageAsync(
-                            callbackQuery.Message.Chat.Id,
-                            callbackQuery.Message.MessageId);
+                    DeleteMessage(bot, callbackQuery);
                     var user = await _db.GetUserAsNoTracking(callbackQuery.From.Username);
                     await bot.SendTextMessageAsync(
                         callbackQuery.Message.Chat.Id,
-                        text: $"Логин: {user.Login} \nПароль: {user.Password}",
+                        text: $"Личный кабинет в https://algoref.ru/\nЛогин: {user.Login} \nПароль: {user.Password}",
                         replyMarkup: KeyboardMarkup.MainMenu);
                 }
                 else if (callbackQuery.Data == "GetRef")
                 {
-                    await bot.DeleteMessageAsync(
-                            callbackQuery.Message.Chat.Id,
-                            callbackQuery.Message.MessageId);
+                    DeleteMessage(bot, callbackQuery);
                     var user = await _db.GetUserAsNoTracking(callbackQuery.From.Username);
                     string referralLink = $"https://t.me/{bot.GetMeAsync().Result.Username}?start=referral_{user.Login  }";
                     await bot.SendTextMessageAsync(
@@ -121,9 +114,7 @@ namespace AlgoBot.Logic
                 }
                 else if (callbackQuery.Data == "GetCashback")
                 {
-                    await bot.DeleteMessageAsync(
-                            callbackQuery.Message.Chat.Id,
-                            callbackQuery.Message.MessageId);
+                    DeleteMessage(bot, callbackQuery);
                     var cashback = await _db.GetCashback(callbackQuery.From.Username);
                     await bot.SendTextMessageAsync(
                         callbackQuery.Message.Chat.Id,
@@ -132,9 +123,7 @@ namespace AlgoBot.Logic
                 }
                 else if (callbackQuery.Data == "EndRegistration")
                 {
-                    await bot.DeleteMessageAsync(
-                            callbackQuery.Message.Chat.Id,
-                            callbackQuery.Message.MessageId);
+                    DeleteMessage(bot, callbackQuery);
                     await bot.SendTextMessageAsync(
                         callbackQuery.Message.Chat.Id,
                         text: $"Поздравляю с успешным прохождением регистрации!\nЧто я умею?",
@@ -142,9 +131,7 @@ namespace AlgoBot.Logic
                 }
                 else if(callbackQuery.Data == "Stats")
                 {
-                    await bot.DeleteMessageAsync(
-                            callbackQuery.Message.Chat.Id,
-                            callbackQuery.Message.MessageId);
+                    DeleteMessage(bot, callbackQuery);
                     var users = await _db.GetReferals(callbackQuery.From.Username);
 
                     await bot.SendTextMessageAsync(
@@ -155,6 +142,19 @@ namespace AlgoBot.Logic
             }
         }
 
+
+        private void DeleteMessage(ITelegramBotClient bot, CallbackQuery callbackQuery)
+        {
+            try
+            {
+                bot.DeleteMessageAsync(
+                    callbackQuery.Message.Chat.Id,
+                    callbackQuery.Message.MessageId);
+            }
+            catch (Exception e)
+            {
+            }
+        }
         public async Task HandleErrorAsync(ITelegramBotClient botClient, Exception exception, CancellationToken cancellationToken)
         {
             // Некоторые действия

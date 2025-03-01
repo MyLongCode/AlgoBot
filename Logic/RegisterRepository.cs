@@ -11,7 +11,6 @@ namespace AlgoBot.Logic
     {
         private readonly DBMethods _db;
         private readonly MainRepository _mainRepository;
-        private Dictionary<string, int> UserRegisterSteps = new Dictionary<string, int>();
 
         public RegisterRepository(DBMethods db, MainRepository main)
         {
